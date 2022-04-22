@@ -38,7 +38,13 @@ public class Main {
                         case "ls_py":
                             listPythonFiles(path);
                             break;
-
+                        case "is_dir":
+                            isDirectory(path);
+                            break;
+                        case "define":
+                            define(path); break;
+                        default:
+                            System.out.println("No valid command found. Type help to view commands.");
                     }
                     System.out.print("> ");
                     line=input.nextLine();
@@ -80,9 +86,23 @@ public class Main {
         System.out.println();
     };
     // выводит `true`, если `path` это директория, в других случаях `false` - id_dir
-    public static void isDirectory(String path) {};
+    public static void isDirectory(String path) {
+        File file = new File(path);
+        if(file.isDirectory()) {
+            System.out.println(true);
+        } else {
+            System.out.println(false);
+        }
+    }
     // выводит `директория` или `файл` в зависимости от типа `path` - define
-    public static void define(String path) {};
+    public static void define(String path) {
+        File file = new File(path);
+        if(file.isDirectory()) {
+            System.out.println("директория");
+        } else {
+            System.out.println("файл");
+        }
+    }
     // выводит права для файла в формате `rwx` для текущего пользователя - readmod
     public static void printPermissions(String path) {};
     // устанавливает права для файла `path` - setmod
