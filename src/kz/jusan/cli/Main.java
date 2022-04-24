@@ -1,6 +1,13 @@
 package kz.jusan.cli;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -15,9 +22,9 @@ public class Main {
         String[] query;
 
 
-        while(!line.equals("exit")) {
-            try {
 
+            try {
+                while(!line.equals("exit")) {
                     query = line.split(" ");
                     command = query[0];
                     if (query.length > 1) {
@@ -48,17 +55,22 @@ public class Main {
                             printContent(path); break;
                         case "append":
                             appendFooter(path); break;
+                        case "bc":
+                            createBackup(path); break;
+                        case "greplong":
+                            printLongestWord(path); break;
                         default:
                             System.out.println("No valid command found. Type help to view commands.");
                     }
                     System.out.print("> ");
                     line=input.nextLine();
                 }
+            }
             catch(Exception e) {
                 System.out.println(e);
-                return;
+                e.printStackTrace();
             }
-            }
+
 
     }
 
@@ -174,8 +186,25 @@ public class Main {
         }
     }
     // создает копию `path` в директорию `/tmp/${date}.backup` где, date - это дата в формате `dd-mm-yyyy`. `path` может быть директорией или файлом. При директории, копируется весь контент. - bc
-    public static void createBackup(String path) {
+    public static void createBackup(String path) throws IOException {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String today = dtf.format(LocalDateTime.now()).toString();
+        String destinationString = "/tmp/${" + today + "}.backup/";
 
+        File destinationFolder = new File(destinationString);
+        if(!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+
+        File file = new File(path);
+        //if(file.isFile()) {
+            destinationString += file.getName();
+        //}
+
+        Path source = Paths.get(path);
+        Path destination = Paths.get(destinationString);
+
+        Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
     }
     // выводит самое длинное слово в файле - greplong
     public static void printLongestWord(String path) {
